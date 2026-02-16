@@ -22,13 +22,18 @@ public class AuthorizationServerConfig {
 
 	@Bean
 	public RegisteredClientRepository registeredClientRepository(PasswordEncoder passwordEncoder) {
-		RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
-				.clientId("algafood-web").clientSecret(passwordEncoder.encode("web123"))
+		RegisteredClient algafoodWeb = RegisteredClient.withId(UUID.randomUUID().toString()).clientId("algafood-web")
+				.clientSecret(passwordEncoder.encode("web123"))
 				.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
 				.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS).scope("read").scope("write")
 				.tokenSettings(TokenSettings.builder().accessTokenTimeToLive(Duration.ofHours(6)).build()).build();
 
-		return new InMemoryRegisteredClientRepository(registeredClient);
+		RegisteredClient checkToken = RegisteredClient.withId(UUID.randomUUID().toString()).clientId("check-token")
+				.clientSecret(passwordEncoder.encode("check123"))
+				.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+				.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS).build();
+
+		return new InMemoryRegisteredClientRepository(algafoodWeb, checkToken);
 	}
 
 	@Bean
